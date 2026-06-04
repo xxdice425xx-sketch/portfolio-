@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Portfolio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --orange: #ff6b2b;
+      --orange-dim: rgba(255, 107, 43, 0.15);
+      --text: #e8e8e8;
+      --muted: #666;
+      --mono: 'Courier New', monospace;
+    }
+
+    body {
+      background: #000000;
+      color: var(--text);
+      font-family: -apple-system, 'Hiragino Sans', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 48px;
+      background: rgba(13,13,13,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--orange);
+      letter-spacing: 2px;
+    }
+    .logo span { color: var(--muted); }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 32px;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 1px;
+      transition: color .2s;
+    }
+    nav a:hover { color: var(--orange); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 70vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 48px 60px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(
+        to bottom,
+        #2c0e00 0%,
+        #1e0900 25%,
+        #0f0400 55%,
+        #000000 100%
+      );
+    }
+    /* 左上からのオレンジ光彩 */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 75% 90% at 15% 5%, rgba(255,107,43,0.45) 0%, rgba(255,60,0,0.15) 35%, transparent 65%);
+      pointer-events: none;
+    }
+    /* 下端を完全な黒に落とす */
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 35%;
+      background: linear-gradient(to bottom, transparent 0%, #000000 100%);
+      pointer-events: none;
+    }
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--orange);
+      letter-spacing: 3px;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 7vw, 80px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, #ff6b2b 0%, #ff9a5c 50%, #ffb347 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 28px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--orange);
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border-radius: 4px;
+      transition: opacity .2s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      margin-left: 16px;
+    }
+    .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* ── WORKS ── */
+    .section {
+      padding: 110px 48px;
+      background: #000000;
+    }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--orange);
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+    .section h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .card:hover {
+      border-color: var(--orange);
+      transform: translateY(-4px);
+    }
+    .card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      background: #1a1a1a;
+    }
+    .card-img-placeholder {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      background: var(--orange-dim);
+      color: var(--orange);
+      border-radius: 3px;
+      letter-spacing: 1px;
+    }
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── ABOUT ── */
+    .about {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .about p {
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .stat {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--orange);
+      font-family: var(--mono);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 40px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    footer p { font-size: 13px; color: var(--muted); }
+    .social-links { display: flex; gap: 24px; }
+    .social-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .social-links a:hover { color: var(--orange); }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">DA<span>.</span>dev</div>
+    <ul>
+      <li><a href="#works">Works</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-label">// AI DEVELOPER PORTFOLIO</div>
+    <h1>Claude Codeで<br>実務を<em>自動化</em>する。</h1>
+    <p>AI × 自動化の開発者。SNS運用・情報収集・コードレビューを Claude Code でシステム化しています。</p>
+    <div>
+      <a href="#works" class="btn">Works を見る</a>
+      <a href="#about" class="btn btn-ghost">About</a>
+    </div>
+  </section>
+
+  <!-- WORKS -->
+  <section class="section" id="works">
+    <div class="section-label">// WORKS</div>
+    <h2>制作実績</h2>
+    <div class="grid">
+
+      <div class="card">
+        <img class="card-img" src="image/ss-01-sns-lp.png" alt="SNS自動化LP">
+        <div class="card-body">
+          <div class="card-tags">
+            <span class="tag">HTML/CSS</span>
+            <span class="tag">Claude Code</span>
+          </div>
+          <h3>SNS自動化ランディングページ</h3>
+          <p>「AIで、SNSが勝手に動く。」をコンセプトにしたLP。Claude Codeで完全生成。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="image/ss-02-news-digest.png" alt="ニュースダイジェスト">
+        <div class="card-body">
+          <div class="card-tags">
+            <span class="tag">Python</span>
+            <span class="tag">Scraping</span>
+            <span class="tag">Claude API</span>
+          </div>
+          <h3>ニュースダイジェスト自動収集</h3>
+          <p>複数メディアをスクレイピングしてAIが要約。毎朝自動で配信するシステム。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="image/ss-03-code-review.png" alt="AIエージェント">
+        <div class="card-body">
+          <div class="card-tags">
+            <span class="tag">Claude Code</span>
+            <span class="tag">SubAgent</span>
+          </div>
+          <h3>AIコードレビュー自動化</h3>
+          <p>Claude CodeのSubAgent機能を使い、コードレビューを自動化するワークフローを構築。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="image/ss-04-yuniko.png" alt="yuniko">
+        <div class="card-body">
+          <div class="card-tags">
+            <span class="tag">TypeScript</span>
+            <span class="tag">React</span>
+            <span class="tag">GitHub</span>
+          </div>
+          <h3>yuniko（Webアプリ）</h3>
+          <p>TypeScript + Reactで構築したWebアプリ。Claude Codeと連携して開発。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="image/ss-05-skills.png" alt="カスタムSkill">
+        <div class="card-body">
+          <div class="card-tags">
+            <span class="tag">Claude Code</span>
+            <span class="tag">Skill</span>
+          </div>
+          <h3>カスタムSkill集</h3>
+          <p>コンテンツリパーパス・テック記事テンプレートなど、業務効率化Skillを複数開発。</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-img-placeholder">[ coming soon ]</div>
+        <div class="card-body">
+          <div class="card-tags">
+            <span class="tag">WIP</span>
+          </div>
+          <h3>次の制作物</h3>
+          <p>現在制作中のプロジェクト。随時更新予定。</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section about" id="about">
+    <div class="about-inner">
+      <div>
+        <div class="section-label">// ABOUT</div>
+        <h2>About Me</h2>
+        <p>Claude Codeを中心にAI活用・自動化システムの開発を行っています。</p>
+        <p>SNS運用の自動化から、スクレイピング・LPの生成まで、実務で使えるAIワークフローの構築が得意領域です。</p>
+        <p>現在、AI開発の学習を加速中。</p>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">29+</div>
+          <div class="stat-label">制作実績</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2ヶ月</div>
+          <div class="stat-label">Claude Code歴</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">5+</div>
+          <div class="stat-label">自動化ツール</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">学習継続中</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <p>© 2026 DA.dev — Built with Claude Code</p>
+    <div class="social-links">
+      <a href="#">GitHub</a>
+      <a href="#">X (Twitter)</a>
+      <a href="#">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>

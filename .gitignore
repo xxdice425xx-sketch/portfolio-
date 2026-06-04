@@ -1,0 +1,4 @@
+.DS_Store
+warm/
+node_modules/
+*.log
